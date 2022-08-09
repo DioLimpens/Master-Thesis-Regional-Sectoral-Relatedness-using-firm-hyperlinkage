@@ -43,8 +43,8 @@ output <- str_replace(input, ".*Input", "Output")
 write.csv2(precl, output)
 
 #additional ideas
-url_parse(precllinkssub$url)[2]     #parser for domain if ARGUS doesnot accept subpages? Perhaps exclude the url with subpages cause this means the company falls under other company, 
+#url_parse(precllinkssub$url)[2]     #parser for domain if ARGUS doesnot accept subpages? Perhaps exclude the url with subpages cause this means the company falls under other company, 
 
-tryREGEX[tryREGEX$id %in% url_sans$id,]
+#tryREGEX[tryREGEX$id %in% url_sans$id,]
 
-test1 <- data.frame(precllinkssub$id, str_remove(precllinkssub$url, ".*www.")) ## Keep everything after www.
+#test1 <- data.frame(precllinkssub$id, str_remove(precllinkssub$url, ".*www.")) ## Keep everything after www.
