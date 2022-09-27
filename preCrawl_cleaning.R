@@ -6,7 +6,7 @@ getwd()
 rm(list = ls())
 
 # Retrieving the correct packages and silently installing if not installed yet.
-packlist <- c("dplyr", "tidyr", "tidyverse", "magrittr", "urltools", "stringr")  # https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
+packlist <- c("plyr", "dplyr", "tidyr", "tidyverse", "magrittr", "urltools", "stringr")  # https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
 newpack <- packlist[!(packlist %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(newpack)
 invisible(lapply(packlist, library, character.only = TRUE))
@@ -21,10 +21,12 @@ NACE <- list()
 URL <- list()
 URL2<- list()
 
+
 for (i in 1:length(myfiles)){
   input <- myfiles[i]
 
   precl <- read.csv(file = input, sep=";")  
+
   precl$NUTS3 <- na_if(precl$NUTS3, '')                             #some of the datasets have empty string in the NUTS instead of <NA>, hence this command
   NUTS <- append(NUTS, list(table(precl$NUTS3, useNA = "always")))  #summation of firms without clear NUTS3 classification
   precl$NACE <-  formatC(precl$NACE, width = 4, flag = "0") 
@@ -79,4 +81,29 @@ NACE_tot <- NACE_tot[order(NACE_tot$x, decreasing= TRUE, na.last=FALSE),]
 URL_tot <- Reduce("+", URL)
 URL2_tot <- Reduce("+", URL2)
 
+
+
+
+#### MISSED potential inclusion of companies due to missing NUTS3 classification ####
+# For checking on missing companies due to incomplete attrition by BvD for NUTS3 
+mydir <- "Input"                                                    
+myfiles <- list.files(path=mydir, pattern="*.csv", full.names=TRUE)
+precl <- ldply(myfiles, read_csv2, show_col_types = FALSE)
+
+pc_nuts <- read.csv("pc2020_NL_NUTS-2021_v2.0.csv", sep=";")                    #Source: https://gisco-services.ec.europa.eu/tercet/flat-files 
+pc_nuts$CODE <- gsub("'", "", pc_nuts$CODE)                                     # Be advised: in the set above does not include all the postalcodes in NL, stil missing 2227 codes 
+pc_nuts$NUTS3 <- gsub("'", "", pc_nuts$NUTS3)
+
+postal <- read.csv("Postalcodes.csv", sep=";")[, c("BvD.ID.number", "Postcode.Latin.Alphabet")] 
+
+precl <- merge(x = precl, y = postal, by = "BvD.ID.number", all.x = TRUE) 
+table(precl$NUTS3, useNA = "always")
+precl$Postcode.Latin.Alphabet <-  gsub(" ", "", precl$Postcode.Latin.Alphabet, fixed = TRUE)
+precl$Postcode.Latin.Alphabet <- sub("\\s+$", "", gsub('(.{4})', '\\1 ', precl$Postcode.Latin.Alphabet ))
+
+precl$NUTS3_post <- pc_nuts[match(precl$Postcode, pc_nuts$CODE), 1]
+
+
+extra <- precl[is.na(precl$NUTS3), c("NUTS3_post", "url")] %>% drop_na(url)
+table(extra$NUTS3_post, useNA = "always")
 
