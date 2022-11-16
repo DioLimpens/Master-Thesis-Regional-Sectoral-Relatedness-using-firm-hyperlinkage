@@ -1,8 +1,10 @@
 ##################################################
 # Script for Network modeling, EDA, and Analysis #
 ##################################################
+# Still needs some cleaning
+
 getwd()
-#setwd("/Users/dio/Documents/R-programming/Master_thesis/Master_thesis/Master-Thesis-Regional-Sectoral-Relatedness-using-firm-hyperlinkage")
+setwd("/Users/dio/Documents/R-programming/Master_thesis/Master_thesis/Master-Thesis-Regional-Sectoral-Relatedness-using-firm-hyperlinkage")
 
 rm(list = ls())
 
