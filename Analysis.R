@@ -1,6 +1,6 @@
-#######################################
-# Script for Network modeling and EDA #
-#######################################
+##################################################
+# Script for Network modeling, EDA, and Analysis #
+##################################################
 getwd()
 #setwd("/Users/dio/Documents/R-programming/Master_thesis/Master_thesis/Master-Thesis-Regional-Sectoral-Relatedness-using-firm-hyperlinkage")
 
@@ -2259,4 +2259,4 @@ df$link <- df$link+1
 scatter.smooth(x=df$rltd, y=df$link, main="Link ~ Relatedness", log="xy") 
 is.infinite(df)
 
-### The end ###
+### The end ##
