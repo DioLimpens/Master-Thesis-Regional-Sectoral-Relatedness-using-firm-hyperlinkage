@@ -39,10 +39,10 @@ for (i in 1:length(myfiles)){
   input <- myfiles[i]
   temp <- read.csv(file = input, sep="\t")
   URL_er <- append(URL_er, list(table(temp$error)))                             #to count the number of faulty websites and good scraped websites
-  #temp <- filter(temp, grepl("None", error))
-  #temp$ID <- sub("^", add[i] , temp$ID )  
-  #tempk<- unique(temp$ID)
-  #nl <- append(nl, tempk)
+  temp <- filter(temp, grepl("None", error))
+  temp$ID <- sub("^", add[i] , temp$ID )  
+  tempk<- unique(temp$ID)
+  nl <- append(nl, tempk)
 }
 
 nl <- urllist[(urllist$id %in% nl),]
