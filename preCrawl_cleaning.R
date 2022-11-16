@@ -67,6 +67,21 @@ for (i in 1:length(myfiles)){
 NUTS_tot <- transpose(NUTS) %>%          #https://stackoverflow.com/questions/60081500/r-sum-vectors-in-list-of-list 
         map(reduce, `+`)
 #Reduce("+", lapply(NUTS, "[[", 40))   #sum for specific index:  https://stackoverflow.com/questions/43628456/sum-elements-across-a-list-of-data-frames
+NUTS_tot <-unlist(NUTS_tot, recursive = FALSE)
+names(NUTS_tot)[40] <- "Na"
+NUTS_tot <- data.frame(NUTS3= names(NUTS_tot), amount= NUTS_tot)
+
+
+ggplot(data=NUTS_tot, aes(x=amount, y=NUTS3)) +
+  geom_bar(stat="identity", aes(fill="red"))+
+  labs(title= "Distribution of firms over NUTS3", 
+       y = "Amount of firms", x = "NUTS3")+
+  guides(fill = FALSE)+
+  theme_pubclean()
+
+
+
+
 
 NACE_NA <- Reduce("+", sapply(NACE, tail, 1)) 
 test <- Reduce("+", lapply(NACE))
@@ -77,9 +92,27 @@ df <- data.frame(NACE = names(res), count= res)
 df[is.na(df)] <- "NA"
 NACE_tot <- aggregate(df$count, by=list(NACE=df$NACE), FUN=sum)
 NACE_tot <- NACE_tot[order(NACE_tot$x, decreasing= TRUE, na.last=FALSE),]
+NACE_tot$NACE <- sub("^0+", "", NACE_tot$NACE) 
+NACE_tot$NACE <- as.numeric(NACE_tot$NACE) 
 
-URL_tot <- Reduce("+", URL)
-URL2_tot <- Reduce("+", URL2)
+library(ggpubr)
+ggplot(NACE_tot, aes(NACE, x)) +                                                # Density plot for NACE classes national and at the class 1 level
+  geom_linerange(
+    aes(x = NACE, ymin = 0, ymax = x), 
+    color = "lightgray", size = 1.5
+  )+
+  geom_point(aes(col="red"), size = 0.5)+
+  labs(title= "National Distribution over NACE class", 
+       y = "Amount of firms", x = "NACE (class 1)")+
+  scale_x_continuous(breaks=seq(0,9900,500))+
+  guides(color = FALSE)+
+  theme_pubclean()
+
+
+
+
+URL_tot <- Reduce("+", URL)                                                     # Number of companies dropped cause of missing URL
+URL2_tot <- Reduce("+", URL2)                                                   # number of companies dropped cause of faulty url 
 
 
 
